@@ -1,0 +1,123 @@
+
+import simplegui
+
+# Dimensions of frame
+FRAME_WIDTH =300
+FRAME_HEIGHT = 300
+
+# Load ball image
+ball = simplegui.load_image("http://citelms.net/images/ball-red.png")
+paddle = simplegui.load_image ("http://citelms.net/images/paddle.png")
+# x and y coords of ball
+score1 = 0
+score2 = 0
+ballX = 10
+
+ballY = 10
+paddleX = 270
+paddle2X = 20
+paddle2Y = 20
+paddleY = 270
+xChange = 2
+yChange = 2
+paddleXchange = 2
+paddleYchange = 2
+paddleXchange2 = 2
+  
+    
+
+paddleYchange2 = 2
+# Handler to draw on canvas
+def draw(canvas):
+    global ball, ballX, ballY, xChange, paddleXchange2, yChange, score1, score2, label1, label2, paddle, paddleX, paddleY, paddleXchange, paddleYchange, paddle2X, score1, score2, label1, label2
+    
+    imageSize = (ball.get_width(), ball.get_height())
+    imageCenter = (ball.get_width()/2, ball.get_height()/2)
+    imageCoordsOnCanvas = (ballX, ballY)
+    
+    imageSizeOnCanvas = (ball.get_width(), ball.get_height())
+    canvas.draw_image(ball, imageCenter, imageSize, imageCoordsOnCanvas, imageSizeOnCanvas)
+    ballX += xChange
+    ballY += yChange
+ 
+    global paddle, paddleX, paddleY, paddleXchange, paddleYchange,paddleXchange2, paddle2X, score1, score2, label1, label2
+    imageSize = (paddle.get_width(), paddle.get_height())
+    imageCenter = (paddle.get_width()/2, paddle.get_height()/2)
+    imageCoordsOnCanvas = (paddleX, paddleY)
+    imageCoordsOnCanvas2 = (paddle2X, paddle2Y)
+    imageSizeOnCanvas = (paddle.get_width(), paddle.get_height())
+    canvas.draw_image(paddle, imageCenter, imageSize, imageCoordsOnCanvas, imageSizeOnCanvas)
+   
+    if paddleX + paddleXchange > 0 and paddleX + paddleXchange < FRAME_WIDTH :
+        paddleX += paddleXchange
+    canvas.draw_image(paddle, imageCenter, imageSize, imageCoordsOnCanvas2, imageSizeOnCanvas)
+   
+    if paddle2X + paddleXchange2 > 0 and paddle2X + paddleXchange2 < FRAME_WIDTH :
+        paddle2X += paddleXchange2
+    
+    if ballX < 0:
+        xChange *= -1
+        
+        score1 += 1 
+    
+    if ballY < 0:
+        yChange *= -1
+        
+        score2 += 1
+        
+    if ballX >= FRAME_WIDTH:
+        xChange *= -1
+        
+        score1 += 1 
+    
+    if ballY >= FRAME_HEIGHT:
+        yChange *= -1 
+        
+        score2 += 1
+        
+    if ballY > paddleY - 10 and ballX > paddleX - 30 and ballX < paddleX + 30:
+        yChange *= -1
+        
+    if ballY < paddle2Y + 10 and ballX > paddle2X - 30 and ballX < paddle2X + 30:
+        yChange *= -1    
+    label1.set_text(score1)   
+    label2.set_text(score2)         
+        
+
+
+
+def keydown(key):
+    global paddleX, paddle2X, paddleXchange, paddleYchange,paddleXchange2, FRAME_WIDTH, paddle2X, paddleXchange2, paddleYchange2
+    if key == simplegui.KEY_MAP["left"] and paddleX > 0:
+        paddleXchange -= 5
+    if key == simplegui.KEY_MAP["right"] and paddleX < FRAME_WIDTH:
+        paddleXchange += 5
+    if key == simplegui.KEY_MAP["a"] and paddle2X > 0:
+        paddleXchange2 -= 5
+    if key == simplegui.KEY_MAP["d"] and paddle2X < FRAME_WIDTH:
+        paddleXchange2 += 5
+    
+def keyup(key):
+    global paddleX, paddleXchange, FRAME_WIDTH, paddle2X, paddleXchange2
+    if key == simplegui.KEY_MAP["left"] and paddleX > 0:
+        paddleXchange = 0
+    if key == simplegui.KEY_MAP["right"] and paddleX < FRAME_WIDTH:
+        paddleXchange = 0   
+    if key == simplegui.KEY_MAP["a"] and paddle2X > 0:
+        paddleXchange2 = 0
+    if key == simplegui.KEY_MAP["d"] and paddle2X < FRAME_WIDTH:
+        paddleXchange2 = 0   
+        
+ # Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Pong by Anna", FRAME_WIDTH, FRAME_HEIGHT)
+frame.set_keydown_handler(keydown)
+frame.set_keyup_handler(keyup)
+    
+label1 = frame.add_label('score1', 200) 
+label2 = frame.add_label('score2', 200)
+     
+# Call draw
+frame.set_draw_handler(draw)
+
+# Start the frame animation
+frame.start()
